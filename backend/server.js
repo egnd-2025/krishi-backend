@@ -4,8 +4,10 @@ require("dotenv").config();
 const userRoutes = require("./routes/userRoutes");
 const landRoutes = require("./routes/landRoutes");
 const satelliteRoutes = require("./routes/satelliteRoutes");
+const gptRoutes = require("./routes/gptRoutes");
 const orderRoutes = require("./routes/orderRoutes");
-const port = 5000;
+const agenticRoutes = require("./routes/agenticRoutes");
+const port = 5001;
 
 const app = express();
 
@@ -20,7 +22,9 @@ app.get("/", (req, res) => {
 app.use("/api/user", userRoutes);
 app.use("/api/land", landRoutes);
 app.use("/api/satellite", satelliteRoutes);
+app.use("/api/gpt", gptRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/agentic", agenticRoutes);
 
 app.listen(port, () => {
   console.log(`Server running on port http://localhost:${port}`);

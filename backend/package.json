@@ -24,7 +24,9 @@
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.33.0",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "viem": "^2.37.8",
+    "x402-fetch": "^0.6.0"
   },
   "devDependencies": {
     "mocha": "^10.2.0"
