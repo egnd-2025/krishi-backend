@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(paymentMiddleware(
   "0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00", // receiving wallet address
   {  // Route configurations for protected endpoints
-    "POST /order/seed/": {
+    "POST /order/seeds": {
       price: "$0.004",
       network: "polygon-amoy",
       config: {
@@ -121,6 +121,85 @@ app.post("/order/pesticides", (req, res) => {
     quantity,
     price,
   });
+});
+
+// Product catalog endpoints (no payment required)
+app.get("/products/seeds", (req, res) => {
+  const seeds = [
+    { name: "Basmati Rice Seeds", price: 2.00, unit: "kg", description: "Premium basmati rice seeds for high yield", category: "cereal" },
+    { name: "Wheat Seeds", price: 1.50, unit: "kg", description: "High-quality wheat seeds for bread production", category: "cereal" },
+    { name: "Cotton Seeds", price: 3.00, unit: "kg", description: "Premium cotton seeds for textile production", category: "fiber" },
+    { name: "Maize Seeds", price: 2.50, unit: "kg", description: "Hybrid maize seeds for high productivity", category: "cereal" },
+    { name: "Soybean Seeds", price: 2.20, unit: "kg", description: "Protein-rich soybean seeds", category: "legume" }
+  ];
+  res.json(seeds);
+});
+
+app.get("/products/fertilizers", (req, res) => {
+  const fertilizers = [
+    { name: "Urea", price: 1.50, unit: "kg", description: "Nitrogen-rich fertilizer for plant growth", npk: "46-0-0" },
+    { name: "DAP", price: 2.00, unit: "kg", description: "Diammonium phosphate for root development", npk: "18-46-0" },
+    { name: "NPK 19-19-19", price: 2.50, unit: "kg", description: "Balanced NPK fertilizer for overall plant health", npk: "19-19-19" },
+    { name: "Potash", price: 1.80, unit: "kg", description: "Potassium fertilizer for fruit development", npk: "0-0-60" },
+    { name: "Compost", price: 0.50, unit: "kg", description: "Organic compost for soil improvement", npk: "2-1-1" }
+  ];
+  res.json(fertilizers);
+});
+
+app.get("/products/tools", (req, res) => {
+  const tools = [
+    { name: "Steel Plow", price: 5.00, unit: "piece", description: "Heavy-duty steel plow for soil preparation", category: "tillage" },
+    { name: "Hand Sickle", price: 3.00, unit: "piece", description: "Traditional hand sickle for harvesting", category: "harvesting" },
+    { name: "Water Sprayer", price: 4.00, unit: "piece", description: "Manual water sprayer for irrigation", category: "irrigation" },
+    { name: "Seed Drill", price: 8.00, unit: "piece", description: "Precision seed drill for planting", category: "planting" },
+    { name: "Hoe", price: 2.50, unit: "piece", description: "Multi-purpose hoe for weeding and cultivation", category: "cultivation" }
+  ];
+  res.json(tools);
+});
+
+app.get("/products/pesticides", (req, res) => {
+  const pesticides = [
+    { name: "Glyphosate", price: 3.00, unit: "liter", description: "Broad-spectrum herbicide for weed control", type: "herbicide" },
+    { name: "Neem Oil", price: 4.50, unit: "liter", description: "Organic pesticide from neem tree", type: "organic" },
+    { name: "Deltamethrin", price: 3.50, unit: "liter", description: "Synthetic insecticide for pest control", type: "insecticide" },
+    { name: "Copper Sulfate", price: 2.80, unit: "liter", description: "Fungicide for disease prevention", type: "fungicide" },
+    { name: "Bacillus Thuringiensis", price: 5.00, unit: "liter", description: "Biological insecticide", type: "biological" }
+  ];
+  res.json(pesticides);
+});
+
+app.get("/products/all", (req, res) => {
+  const allProducts = {
+    seeds: [
+      { name: "Basmati Rice Seeds", price: 2.00, unit: "kg", description: "Premium basmati rice seeds for high yield", category: "cereal" },
+      { name: "Wheat Seeds", price: 1.50, unit: "kg", description: "High-quality wheat seeds for bread production", category: "cereal" },
+      { name: "Cotton Seeds", price: 3.00, unit: "kg", description: "Premium cotton seeds for textile production", category: "fiber" },
+      { name: "Maize Seeds", price: 2.50, unit: "kg", description: "Hybrid maize seeds for high productivity", category: "cereal" },
+      { name: "Soybean Seeds", price: 2.20, unit: "kg", description: "Protein-rich soybean seeds", category: "legume" }
+    ],
+    fertilizers: [
+      { name: "Urea", price: 1.50, unit: "kg", description: "Nitrogen-rich fertilizer for plant growth", npk: "46-0-0" },
+      { name: "DAP", price: 2.00, unit: "kg", description: "Diammonium phosphate for root development", npk: "18-46-0" },
+      { name: "NPK 19-19-19", price: 2.50, unit: "kg", description: "Balanced NPK fertilizer for overall plant health", npk: "19-19-19" },
+      { name: "Potash", price: 1.80, unit: "kg", description: "Potassium fertilizer for fruit development", npk: "0-0-60" },
+      { name: "Compost", price: 0.50, unit: "kg", description: "Organic compost for soil improvement", npk: "2-1-1" }
+    ],
+    tools: [
+      { name: "Steel Plow", price: 5.00, unit: "piece", description: "Heavy-duty steel plow for soil preparation", category: "tillage" },
+      { name: "Hand Sickle", price: 3.00, unit: "piece", description: "Traditional hand sickle for harvesting", category: "harvesting" },
+      { name: "Water Sprayer", price: 4.00, unit: "piece", description: "Manual water sprayer for irrigation", category: "irrigation" },
+      { name: "Seed Drill", price: 8.00, unit: "piece", description: "Precision seed drill for planting", category: "planting" },
+      { name: "Hoe", price: 2.50, unit: "piece", description: "Multi-purpose hoe for weeding and cultivation", category: "cultivation" }
+    ],
+    pesticides: [
+      { name: "Glyphosate", price: 3.00, unit: "liter", description: "Broad-spectrum herbicide for weed control", type: "herbicide" },
+      { name: "Neem Oil", price: 4.50, unit: "liter", description: "Organic pesticide from neem tree", type: "organic" },
+      { name: "Deltamethrin", price: 3.50, unit: "liter", description: "Synthetic insecticide for pest control", type: "insecticide" },
+      { name: "Copper Sulfate", price: 2.80, unit: "liter", description: "Fungicide for disease prevention", type: "fungicide" },
+      { name: "Bacillus Thuringiensis", price: 5.00, unit: "liter", description: "Biological insecticide", type: "biological" }
+    ]
+  };
+  res.json(allProducts);
 });
 
 app.listen(4021, () => {
