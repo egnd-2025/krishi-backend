@@ -1,0 +1,37 @@
+version: '3'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5001:5001"
+    depends_on:
+      - cockroachdb
+    volumes:
+      - ./backend:/usr/src/app
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=cockroachdb
+      - DB_PORT=${DB_PORT}
+      - JWT_SECRET=${JWT_SECRET}
+      - OPENWEATHERMAPS_KEY=${OPENWEATHERMAPS_KEY}
+      - AGRO_MONITOR_API_KEY=${AGRO_MONITOR_API_KEY}
+      - OPENAI_KEY=${OPENAI_KEY}
+      - MERCHANT_URL=http://merchant:4021
+    command: sh -c "npm install && node server.js"
+  merchant:
+    build: ./merchant
+    ports:
+      - "4021:4021"
+    volumes:
+      - ./merchant:/usr/src/app
+    environment:
+      - FACILITATOR_URL=${FACILITATOR_URL:-https://x402.polygon.technology}
+    command: sh -c "npm install && node server.js"
+  cockroachdb:
+    image: cockroachdb/cockroach:latest
+    command: start-single-node --insecure
+    ports:
+      - "26258:26257"
+      - "8081:8080"
