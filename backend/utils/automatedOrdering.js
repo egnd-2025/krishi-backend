@@ -11,7 +11,8 @@ require('dotenv').config();
 const initializeWalletClient = () => {
   const privateKey = process.env.PRIVATE_KEY;
   if (!privateKey) {
-    throw new Error("PRIVATE_KEY not set in .env file");
+    console.warn("PRIVATE_KEY not set in .env file - automated ordering will be skipped");
+    return null;
   }
 
   const account = privateKeyToAccount(`0x${privateKey}`);
@@ -72,7 +73,7 @@ const placeOrderWithX402 = async (orderData) => {
   try {
     const { client, account } = initializeWalletClient();
     const merchantUrl = process.env.MERCHANT_URL || "http://localhost:4021";
-    
+    console.log(orderData)
     console.log("Using wallet address:", account.address);
     
     const fetchWithPayment = wrapFetchWithPayment(fetch, client);
