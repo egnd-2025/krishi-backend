@@ -172,13 +172,31 @@ exports.executeOrdering = async (req, res) => {
 exports.getOrderHistory = async (req, res) => {
   try {
     const { userId } = req.params;
+    const { limit, offset, status } = req.query;
+
+    if (!userId) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'User ID is required' 
+      });
+    }
+
+    // Import the order utility function
+    const { getOrdersByUserId } = require('../utils/orderUtils');
+
+    const options = {
+      limit: limit ? parseInt(limit) : 50,
+      offset: offset ? parseInt(offset) : 0,
+      status: status || null,
+    };
+
+    const orders = await getOrdersByUserId(userId, options);
     
-    // This would typically fetch from a database
-    // For now, return a placeholder response
     res.status(200).json({
       success: true,
       userId: userId,
-      message: "Order history feature coming soon",
+      count: orders.length,
+      orders: orders,
       timestamp: new Date().toISOString()
     });
 
