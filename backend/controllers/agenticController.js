@@ -10,7 +10,7 @@ exports.agenticAnalysisAndOrdering = async (req, res) => {
       return res.status(400).json({ error: "User ID is required" });
     }
 
-    console.log(`Starting agentic analysis for user ${userId}`);
+    console.log(`Starting agentic analysis and ordering for user ${userId}`);
 
     // Step 1: Generate comprehensive recommendations using truly agentic system
     const recommendations = await generateTrulyAgenticRecommendations(userId);
@@ -18,7 +18,23 @@ exports.agenticAnalysisAndOrdering = async (req, res) => {
     // Step 2: Prepare order-ready recommendations for frontend
     const orderReadyRecommendations = prepareOrderReadyRecommendations(recommendations.productRecommendations);
     
-    // Step 3: Prepare comprehensive response
+    // Step 3: Execute automated ordering for high-priority items
+    let orderingResult = null;
+    try {
+      console.log(`Executing automated ordering for user ${userId}`);
+      orderingResult = await executeAutomatedOrdering(userId, recommendations.productRecommendations);
+      console.log("Automated ordering completed:", orderingResult);
+    } catch (orderingError) {
+      console.error("Error in automated ordering:", orderingError.message);
+      // Continue with analysis even if ordering fails
+      orderingResult = {
+        success: false,
+        error: orderingError.message,
+        message: "Analysis completed but automated ordering failed"
+      };
+    }
+    
+    // Step 4: Prepare comprehensive response
     const response = {
       success: true,
       userId: userId,
@@ -30,16 +46,19 @@ exports.agenticAnalysisAndOrdering = async (req, res) => {
         aiInsights: recommendations.aiInsights
       },
       ordering: {
+        automated: orderingResult,
         readyForFrontend: true,
         orderReadyRecommendations: orderReadyRecommendations,
-        message: "Recommendations ready for frontend ordering. Use the orderReadyRecommendations to place orders via merchant API."
+        message: orderingResult?.success 
+          ? "Analysis completed and automated orders placed successfully!" 
+          : "Analysis completed. Some orders may have failed - check orderReadyRecommendations for manual ordering."
       }
     };
 
     res.status(200).json(response);
 
   } catch (error) {
-    console.error("Error in agentic analysis:", error.message);
+    console.error("Error in agentic analysis and ordering:", error.message);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -51,7 +70,7 @@ exports.agenticAnalysisAndOrdering = async (req, res) => {
 // Prepare recommendations in format ready for frontend ordering
 const prepareOrderReadyRecommendations = (productRecommendations) => {
   const orderReady = [];
-  
+  console.log(productRecommendations)
   // Filter for high and medium priority items that should be ordered
   const autoOrderItems = productRecommendations.filter(r => 
     r.priority === "high" || 
@@ -153,13 +172,31 @@ exports.executeOrdering = async (req, res) => {
 exports.getOrderHistory = async (req, res) => {
   try {
     const { userId } = req.params;
+    const { limit, offset, status } = req.query;
+
+    if (!userId) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'User ID is required' 
+      });
+    }
+
+    // Import the order utility function
+    const { getOrdersByUserId } = require('../utils/orderUtils');
+
+    const options = {
+      limit: limit ? parseInt(limit) : 50,
+      offset: offset ? parseInt(offset) : 0,
+      status: status || null,
+    };
+
+    const orders = await getOrdersByUserId(userId, options);
     
-    // This would typically fetch from a database
-    // For now, return a placeholder response
     res.status(200).json({
       success: true,
       userId: userId,
-      message: "Order history feature coming soon",
+      count: orders.length,
+      orders: orders,
       timestamp: new Date().toISOString()
     });
 

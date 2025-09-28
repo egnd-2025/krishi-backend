@@ -7,17 +7,7 @@ const {
   deleteOrder,
 } = require("../utils/orderUtils");
 
-/**
- * Orders Controller - HTTP Request Handlers
- * 
- * This module handles HTTP requests for order management.
- * It uses the orderUtils for business logic and focuses on request/response handling.
- */
 
-/**
- * Create a new order
- * POST /api/orders
- */
 exports.createOrder = async (req, res) => {
   try {
     const { userId, items, transactionId, currency, notes } = req.body;
@@ -55,10 +45,7 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-/**
- * Get order by ID
- * GET /api/orders/:id
- */
+
 exports.getOrder = async (req, res) => {
   try {
     const { id } = req.params;
@@ -86,10 +73,7 @@ exports.getOrder = async (req, res) => {
   }
 };
 
-/**
- * Get orders by user ID
- * GET /api/orders/user/:userId
- */
+
 exports.getUserOrders = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -121,10 +105,7 @@ exports.getUserOrders = async (req, res) => {
   }
 };
 
-/**
- * Update order status
- * PUT /api/orders/:id/status
- */
+
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -158,10 +139,7 @@ exports.updateOrderStatus = async (req, res) => {
   }
 };
 
-/**
- * Add item to existing order
- * POST /api/orders/:id/items
- */
+
 exports.addItemToOrder = async (req, res) => {
   try {
     const { id } = req.params;
@@ -197,10 +175,6 @@ exports.addItemToOrder = async (req, res) => {
   }
 };
 
-/**
- * Delete order (soft delete)
- * DELETE /api/orders/:id
- */
 exports.deleteOrder = async (req, res) => {
   try {
     const { id } = req.params;

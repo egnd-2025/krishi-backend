@@ -125,7 +125,7 @@ RECOMMENDED CROPS:
 ${cropRecommendations.map(c => `- ${c.name} (Score: ${c.score}/100)`).join('\n')}
 
 LAND CONDITIONS:
-- Area: ${landAnalysis.land.area} hectares
+- Area: ${landAnalysis.land.area} square feet (${(landAnalysis.land.area / 10764).toFixed(2)} hectares)
 - Temperature: ${landAnalysis.conditions.temperature}°C
 - Humidity: ${landAnalysis.conditions.humidity}%
 - Soil Health (NDVI): ${landAnalysis.conditions.ndvi}
@@ -136,6 +136,13 @@ SEEDS: ${availableProducts.seeds.map(s => `${s.name} ($${s.price}/${s.unit})`).j
 FERTILIZERS: ${availableProducts.fertilizers.map(f => `${f.name} ($${f.price}/${f.unit})`).join(', ')}
 TOOLS: ${availableProducts.tools.map(t => `${t.name} ($${t.price}/${t.unit})`).join(', ')}
 PESTICIDES: ${availableProducts.pesticides.map(p => `${p.name} ($${p.price}/${p.unit})`).join(', ')}
+
+QUANTITY CALCULATION RULES:
+- For seeds: 20-30 kg per hectare
+- For fertilizers: 80-120 kg per hectare  
+- For pesticides: 1-3 liters per hectare
+- For tools: 1-2 pieces (not area dependent)
+- Calculate based on the hectare area shown above
 
 IMPORTANT: You must return recommendations in EXACTLY this JSON format that matches our automated ordering system:
 
@@ -218,7 +225,11 @@ const calculateIntelligentQuantity = (productType, landArea, cropType, soilCondi
     tool: 1 // pieces (not area dependent)
   };
 
-  let quantity = baseRates[productType] * landArea;
+  // Convert land area from square feet to hectares
+  // 1 hectare = 10,764 square feet
+  const landAreaInHectares = landArea / 10764;
+  
+  let quantity = baseRates[productType] * landAreaInHectares;
 
   // Adjust based on crop type
   const cropMultipliers = {
